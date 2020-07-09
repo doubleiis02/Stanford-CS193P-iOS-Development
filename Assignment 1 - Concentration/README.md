@@ -3,7 +3,7 @@
 Match every pair by remembering where cards are located.  
 Earn 2 points for every match. Lose one point for every mismatch involving a card you have already seen.  
 There are 6 different themes of cards, which are randomly assigned to each new game  
-[Directions] (https://applehosted.podcasts.apple.com/stanford/Programming_Project_1_Concentration.pdf)
+[Directions](https://applehosted.podcasts.apple.com/stanford/Programming_Project_1_Concentration.pdf)
 
 ## Notes
 
