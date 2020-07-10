@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  Concentration
 //
-//  Created by Jiin Kim on 7/4/20.
+//  Created by Jiin Kim on 7/9/20.
 //  Copyright © 2020 Stanford University. All rights reserved.
 //
 
