@@ -44,7 +44,7 @@ class ViewController: UIViewController
             updateViewFromModel()
             game.flipCount += 1
             flipCountLabel.text = "Flips: \(game.flipCount)"
-            scoreLabel.text = "Scores: \(game.scoreCount)"
+            scoreLabel.text = "Score: \(game.scoreCount)"
         } else {
             print("chosen card was not in cardButtons")
         }
