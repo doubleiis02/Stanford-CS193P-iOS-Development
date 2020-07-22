@@ -10,14 +10,19 @@ import UIKit
 
 class ViewController: UIViewController
 {
-    /// Represents a fresh game
-    lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    /// Represents a fresh game; our model
+    private lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
+    
+    /// Represents the number of pairs of cards within a concentration game
+    var numberOfPairsOfCards: Int {
+        return (cardButtons.count+1) / 2
+    }
     
     /// Represents the index of the current card theme in the array emojiThemes
-    lazy var currentThemeNumber = Int(arc4random_uniform(UInt32(emojiThemes.count)))
+    private lazy var currentThemeNumber = Int(arc4random_uniform(UInt32(emojiThemes.count)))
     
     /// Starts a new game when the New Game button is activated
-    @IBAction func newGame(_ sender: UIButton) {
+    @IBAction private func newGame(_ sender: UIButton) {
         currentThemeNumber = Int(arc4random_uniform(UInt32(emojiThemes.count))) // Randomly sets the theme of the new game
         emojiThemes = createEmojiThemes() // Turns emojiThemes back to its original state, since emojis were removed from the array during the previous game to create new pairs of cards
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2) // game is set to be a fresh Concentration game object
@@ -29,16 +34,16 @@ class ViewController: UIViewController
     }
     
     /// Represents the "Flips : #" label in the View
-    @IBOutlet weak var flipCountLabel: UILabel!
+    @IBOutlet private weak var flipCountLabel: UILabel!
     
     /// Represents the "Score: #" label in the View
-    @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet private weak var scoreLabel: UILabel!
     
     /// Represents an array of every card button in the View
-    @IBOutlet var cardButtons: [UIButton]!
+    @IBOutlet private var cardButtons: [UIButton]!
     
     /// Updates View to match the Model (game stats) after a card button has been activated
-    @IBAction func touchCard(_ sender: UIButton) {
+    @IBAction private func touchCard(_ sender: UIButton) {
         if let cardNumber = cardButtons.firstIndex(of: sender) {
             game.chooseCard(at: cardNumber)
             updateViewFromModel()
@@ -51,7 +56,7 @@ class ViewController: UIViewController
     }
     
     /// "Flips" over the card button
-    func updateViewFromModel() {
+    private func updateViewFromModel() {
         for index in cardButtons.indices {
             let button = cardButtons[index]
             let card = game.cards[index]
@@ -66,10 +71,10 @@ class ViewController: UIViewController
     }
     
     /// Represents an array of themes
-    lazy var emojiThemes = createEmojiThemes()
+    private lazy var emojiThemes = createEmojiThemes()
     
     /// Returns an array of String arrays, wheree each String array contains emojis associated with a unique theme
-    func createEmojiThemes() -> [[String]] {
+    private func createEmojiThemes() -> [[String]] {
         var themes = [[String]]()
         themes.append(["🎃", "👻", "🐈", "🍬", "🍎", "😱", "😈", "🧚‍♂️", "🧻", "🧛🏻‍♂️"])
         themes.append(["🐶", "🐱", "🐻", "🐔", "🐙", "🐣", "🐸", "🐮", "🐰", "🐵"])
@@ -81,15 +86,27 @@ class ViewController: UIViewController
     }
     
     /// Keeps track of the identifier (key) that each emoji in a theme (value) corresponds to
-    var emoji = [Int:String]()
+    private var emoji = [Int:String]()
     
     /// Returns the emoji associated with a specific type of card (based on its identifier)
-    func emoji(for card: Card) -> String {
+    private func emoji(for card: Card) -> String {
         if emoji[card.identifier] == nil, emojiThemes[currentThemeNumber].count > 0 { // sets a new emoji to correspond to the identifier if needed
-            let randomIndex = Int(arc4random_uniform(UInt32(emojiThemes[currentThemeNumber].count)))
-            emoji[card.identifier] = emojiThemes[currentThemeNumber].remove(at: randomIndex)
+                emoji[card.identifier] = emojiThemes[currentThemeNumber].remove(at: emojiThemes[currentThemeNumber].count.arc4random)
         }
         return emoji[card.identifier] ?? "?" // return the optional's value if it exists, otherwise return "?"
     }
 }
 
+/// Returns a random Int between 0 and self
+extension Int {
+    var arc4random: Int {
+        if self > 0 {
+            return Int(arc4random_uniform(UInt32(self)))
+        } else if self < 0 {
+            return -Int(arc4random_uniform(UInt32(abs(self))))
+        } else {
+            return 0
+        }
+        
+    }
+}

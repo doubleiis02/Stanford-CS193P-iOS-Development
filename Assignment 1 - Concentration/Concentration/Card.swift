@@ -23,10 +23,10 @@ struct Card
     var identifier: Int
     
     /// Indicates how many different types of card objects exist
-    static var identifierFactory = 0
+    private static var identifierFactory = 0
     
     /// Returns a unique identifier for a new type of card that has been created
-    static func getUniqueIdentifier() -> Int {
+    private static func getUniqueIdentifier() -> Int {
         identifierFactory += 1
         return identifierFactory
     }

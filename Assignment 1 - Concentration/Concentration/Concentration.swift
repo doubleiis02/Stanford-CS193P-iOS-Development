@@ -11,10 +11,29 @@ import Foundation
 class Concentration
 {
     /// Represents an Array of every card in the game; cards are referenced based on their index number for this Array
-    var cards = [Card]()
+    private(set) var cards = [Card]()
     
     /// Represents the index of the card that is the only card currently face up, if such a card exists
-    var indexOfOneAndOnlyFaceUpCard: Int?
+    private var indexOfOneAndOnlyFaceUpCard: Int? {
+        get {
+            var foundIndex: Int?
+            for index in cards.indices {
+                if cards[index].isFaceUp {
+                    if foundIndex == nil {
+                        foundIndex = index
+                    } else {
+                        return nil
+                    }
+                }
+            }
+            return foundIndex
+        }
+        set {
+            for index in cards.indices {
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
     
     /// Represents the current number of flips in a game
     var flipCount = 0
@@ -24,6 +43,7 @@ class Concentration
     
     /// Updates the score and the status of each card after a card has been flipped
     func chooseCard(at index: Int) {
+        assert(cards.indices.contains(index), "Concnentration.chooseCard(at: \(index)): chosen index not in the cards")
         if !cards[index].isMatched { // function does nothing if the chosen card has already been matched
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index { // only one card was face up
                 if cards[matchIndex].identifier == cards[index].identifier { // the two cards match; add 2 points to score
@@ -43,12 +63,7 @@ class Concentration
                     cards[index].hasSeen = true
                 }
                 cards[index].isFaceUp = true // the Controller will flip over the card to show the card that the player chose
-                indexOfOneAndOnlyFaceUpCard = nil // since two cards are now up, this must be nil
             } else { // either no cards or two cards were face up
-                for flipDownIndex in cards.indices {
-                    cards[flipDownIndex].isFaceUp = false // now every card is face down
-                }
-                cards[index].isFaceUp = true // the one card chosen is now face up
                 indexOfOneAndOnlyFaceUpCard = index
             }
         }
@@ -56,6 +71,7 @@ class Concentration
     
     /// Initializes all the cards in the game and then shuffles their order
     init(numberOfPairsOfCards: Int) {
+        assert(numberOfPairsOfCards > 0, "Concentration.init(\(numberOfPairsOfCards)): you must have at least one pair of cards")
         for _ in 1...numberOfPairsOfCards {
             let card = Card()
             cards += [card, card] // two cards per pair, both have the same values
